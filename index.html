@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Facture</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;400;600&display=swap">
+<style>
+:root{--paper:#ffffff;--ink:#161616;--mute:#555;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:#ececec;font-family:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;color:var(--ink);font-size:16px}
+.bar{max-width:820px;margin:16px auto 0;padding:0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.bar button{font:inherit;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
+.bar button.alt{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.bar button:focus-visible,[contenteditable]:focus-visible,input:focus-visible{outline:2px solid #2b5cff;outline-offset:2px}
+.page{max-width:820px;margin:12px auto 32px;background:var(--paper);padding:40px 44px;display:flex;flex-direction:column;min-height:1000px}
+h1{font-weight:300;font-size:clamp(56px,13vw,104px);line-height:.95;letter-spacing:-.03em;margin:0 0 18px}
+.pills{display:flex;gap:10px;flex-wrap:wrap}
+.pill{border:1px solid var(--ink);border-radius:999px;padding:11px 28px;min-width:200px;display:flex;gap:8px;align-items:center}
+.pill span{white-space:nowrap}
+.pill [contenteditable]{flex:1;min-width:60px}
+hr{border:0;border-top:1px solid var(--ink);margin:28px 0}
+.parties{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;line-height:1.5}
+.parties .r{text-align:right;min-width:220px}
+.parties b{font-weight:600}
+table{width:100%;border-collapse:collapse;margin-top:36px}
+th{background:var(--ink);color:#fff;font-weight:600;padding:12px 8px;text-align:center;font-size:14px}
+td{border:1px solid var(--ink);padding:0;text-align:center;height:50px}
+td>*{padding:0 8px}
+td input{width:100%;border:0;background:transparent;font:inherit;text-align:center;color:inherit;height:48px}
+td .cell{display:flex;align-items:center;justify-content:center;height:48px;gap:4px}
+td .cell input{width:70%}
+td.d [contenteditable]{display:block;padding:14px 8px}
+.tot{margin-top:36px;border:4px solid var(--ink);display:flex;justify-content:flex-end;align-items:center;gap:56px;padding:12px 40px 12px 16px;font-weight:600;background:#fff}
+.rm{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px;padding:0 6px}
+.note{margin-top:18px;font-size:12.5px;color:var(--mute);line-height:1.5}
+.foot{margin-top:auto;padding-top:60px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;line-height:1.55}
+.foot .r{text-align:right}
+.legal{font-size:11.5px;color:var(--mute);margin-top:22px;border-top:1px solid var(--ink);padding-top:12px;line-height:1.5}
+[contenteditable]{min-width:40px;border-radius:4px;-webkit-tap-highlight-color:transparent}
+@media screen{[contenteditable]{background:rgba(43,92,255,.07);box-shadow:0 0 0 3px rgba(43,92,255,.07)}}
+.dd{display:flex;align-items:center;padding:0}.dd [contenteditable]{flex:1}
+@media(max-width:640px){.page{padding:24px 14px;min-height:0}.pill{flex:1 1 100%;min-width:0;padding:12px 20px}.tot{gap:24px;padding:12px 16px}th{font-size:11px;padding:10px 4px}.parties>div{width:100%}.parties .r{text-align:left}.foot .r{text-align:left}td.d{width:44%}td{height:56px}td input,td .cell{height:54px}td .cell input{width:100%;padding:0}td .cell{gap:2px}.bar{font-size:14px}.bar button{padding:12px 18px;flex:1 1 auto}.rm{font-size:24px;padding:8px 12px}}
+@media print{body{background:#fff}.bar,.rm,.addrow{display:none!important}.page{margin:0;max-width:none;min-height:auto;height:100vh;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:0}}
+tr.x{display:none}
+#c1:checked ~ main .r1{display:table-row}
+#c2:checked ~ main .r2{display:table-row}
+#c3:checked ~ main .r3{display:table-row}
+#c4:checked ~ main .r4{display:table-row}
+#c5:checked ~ main .r5{display:table-row}
+#c6:checked ~ main .r6{display:table-row}
+#c7:checked ~ main .r7{display:table-row}
+#c8:checked ~ main .r8{display:table-row}
+#c9:checked ~ main .r9{display:table-row}
+#c10:checked ~ main .r10{display:table-row}
+#c1:not(:checked) ~ .bar .a1{display:inline-block}
+#c1:checked ~ #c2:not(:checked) ~ .bar .a2{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:not(:checked) ~ .bar .a3{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:not(:checked) ~ .bar .a4{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:checked ~ #c5:not(:checked) ~ .bar .a5{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:checked ~ #c5:checked ~ #c6:not(:checked) ~ .bar .a6{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:checked ~ #c5:checked ~ #c6:checked ~ #c7:not(:checked) ~ .bar .a7{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:checked ~ #c5:checked ~ #c6:checked ~ #c7:checked ~ #c8:not(:checked) ~ .bar .a8{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:checked ~ #c5:checked ~ #c6:checked ~ #c7:checked ~ #c8:checked ~ #c9:not(:checked) ~ .bar .a9{display:inline-block}
+#c1:checked ~ #c2:checked ~ #c3:checked ~ #c4:checked ~ #c5:checked ~ #c6:checked ~ #c7:checked ~ #c8:checked ~ #c9:checked ~ #c10:not(:checked) ~ .bar .a10{display:inline-block}
+.addl{display:none;font:inherit;border:1px solid var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer;color:var(--ink);background:transparent;user-select:none}
+.rm{display:inline-block;line-height:1;user-select:none}
+@media(max-width:640px){.addl{padding:12px 18px;flex:1 1 auto;text-align:center}}
+</style>
+</head>
+<body>
+<input type="checkbox" class="tg" id="c1" checked hidden>
+<input type="checkbox" class="tg" id="c2" checked hidden>
+<input type="checkbox" class="tg" id="c3" hidden>
+<input type="checkbox" class="tg" id="c4" hidden>
+<input type="checkbox" class="tg" id="c5" hidden>
+<input type="checkbox" class="tg" id="c6" hidden>
+<input type="checkbox" class="tg" id="c7" hidden>
+<input type="checkbox" class="tg" id="c8" hidden>
+<input type="checkbox" class="tg" id="c9" hidden>
+<input type="checkbox" class="tg" id="c10" hidden>
+<div class="bar">
+  <button type="button" id="print">Enregistrer en PDF / imprimer</button>
+  <label class="addl a1" for="c1" role="button">Ajouter une ligne</label><label class="addl a2" for="c2" role="button">Ajouter une ligne</label><label class="addl a3" for="c3" role="button">Ajouter une ligne</label><label class="addl a4" for="c4" role="button">Ajouter une ligne</label><label class="addl a5" for="c5" role="button">Ajouter une ligne</label><label class="addl a6" for="c6" role="button">Ajouter une ligne</label><label class="addl a7" for="c7" role="button">Ajouter une ligne</label><label class="addl a8" for="c8" role="button">Ajouter une ligne</label><label class="addl a9" for="c9" role="button">Ajouter une ligne</label><label class="addl a10" for="c10" role="button">Ajouter une ligne</label>
+  <span>Touchez les zones bleutées pour les modifier. Les totaux se calculent seuls.</span><noscript><span>(JavaScript désactivé : saisissez les totaux à la main.)</span></noscript>
+</div>
+
+<main class="page">
+  <h1>FACTURE</h1>
+  <div class="pills">
+    <div class="pill"><span>Facture n°</span><span contenteditable="true" spellcheck="false">2026-001</span></div>
+    <div class="pill"><span>Date :</span><span contenteditable="true" spellcheck="false" id="date">JJ/MM/AAAA</span></div>
+  </div>
+  <hr>
+
+  <section class="parties">
+    <div>
+      <div contenteditable="true"><b>Prénom NOM</b></div>
+      <div contenteditable="true">2, place St Armel</div>
+      <div contenteditable="true">56 340 Plouharnel</div>
+      <div contenteditable="true">Téléphone / e-mail</div>
+      <div style="margin-top:22px">SIRET : <span contenteditable="true">000 000 000 00000</span></div>
+    </div>
+    <div class="r">
+      <b>À L’ATTENTION DE</b>
+      <div contenteditable="true">Nom du client</div>
+      <div contenteditable="true">Adresse du client</div>
+      <div contenteditable="true">Code postal, ville</div>
+    </div>
+  </section>
+
+  <table>
+    <thead>
+      <tr><th style="width:40%">DESCRIPTION</th><th>PRIX UNITAIRE</th><th>QUANTITÉ</th><th>TOTAL</th></tr>
+    </thead>
+    <tbody id="rows">
+<tr class="x r1"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c1" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r2"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c2" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r3"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c3" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r4"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c4" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r5"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c5" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r6"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c6" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r7"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c7" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r8"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c8" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r9"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c9" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+<tr class="x r10"><td class="d"><div class="dd"><span contenteditable="true">Prestation Semaine</span><label class="rm" for="c10" role="button" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</label></div></td><td><div class="cell"><input type="number" inputmode="decimal" step="0.01" min="0" aria-label="Prix unitaire"><span>€</span></div></td><td><input type="number" inputmode="decimal" step="any" min="0" aria-label="Quantité"></td><td><div class="cell"><span class="lt" contenteditable="true">0,00</span><span>€</span></div></td></tr>
+</tbody>
+  </table>
+
+  <div class="tot"><span>TOTAL :</span><span id="grand" contenteditable="true">0,00 €</span></div>
+  <div class="note" contenteditable="true">TVA non applicable, art. 293 B du CGI.</div>
+
+  <section class="foot">
+    <div>
+      <b>Paiement à l’ordre de</b> <span contenteditable="true">Prénom NOM</span><br>
+      IBAN <span contenteditable="true">FR00 0000 0000 0000 0000 0000 000</span><br>
+      BIC : <span contenteditable="true">XXXXXXXX</span>
+    </div>
+    <div class="r">
+      <b>Conditions de paiement</b><br>
+      <span contenteditable="true">Paiement sous 30 jours</span>
+    </div>
+  </section>
+  <div class="legal" contenteditable="true">
+    En cas de retard de paiement, pénalité égale à 3 fois le taux d’intérêt légal, ainsi qu’une indemnité forfaitaire de 40 € pour frais de recouvrement (art. L441-10 du Code de commerce). Pas d’escompte pour paiement anticipé.
+  </div>
+</main>
+
+<script>
+(function(){
+function fmt(n){return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function calc(){
+  var sum=0,trs=document.querySelectorAll('#rows tr');
+  for(var i=0;i<trs.length;i++){
+    var k=trs[i].className.match(/r(\d+)/)[1];
+    var on=document.getElementById('c'+k).checked;
+    var inp=trs[i].querySelectorAll('input');
+    var t=on?(parseFloat(inp[0].value)||0)*(parseFloat(inp[1].value)||0):0;
+    if(on){trs[i].querySelector('.lt').textContent=fmt(t);sum+=t}
+  }
+  document.getElementById('grand').textContent=fmt(sum)+' €';
+}
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.className==='tg'){
+    if(!t.checked){
+      var tr=document.querySelector('#rows .r'+t.id.slice(1));
+      var inp=tr.querySelectorAll('input');inp[0].value='';inp[1].value='';
+      tr.querySelector('.d span').textContent='Prestation Semaine';
+    }
+    calc();
+  }
+});
+document.addEventListener('click',function(e){
+  var b=e.target.closest?e.target.closest('#print'):null;
+  if(b)window.print();
+});
+document.addEventListener('input',function(e){if(e.target.closest&&e.target.closest('#rows')&&e.target.tagName==='INPUT')calc()});
+document.addEventListener('focusin',function(e){if(e.target.tagName==='INPUT'&&e.target.select){try{e.target.select()}catch(x){}}});
+document.addEventListener('paste',function(e){
+  if(e.target.closest&&e.target.closest('[contenteditable]')){
+    e.preventDefault();
+    document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text/plain'));
+  }
+});
+document.addEventListener('keydown',function(e){
+  var el=e.target.closest?e.target.closest('[contenteditable]'):null;
+  if(el&&e.key==='Enter'&&!el.classList.contains('note')&&!el.classList.contains('legal')){e.preventDefault();el.blur()}
+});
+try{document.getElementById('date').textContent=new Date().toLocaleDateString('fr-FR')}catch(x){}
+calc();
+})();
+</script>
+</body>
+</html>
